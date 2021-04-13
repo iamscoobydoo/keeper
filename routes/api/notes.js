@@ -7,6 +7,22 @@ const User = require("../../models/User");
 
 const router = express.Router();
 
+//@route    GET api/notes
+//@desc     Get a user's notes
+//@access   Private
+router.get("/", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+        if (!user) return res.status(404).json({ msg: "User does not exists" });
+
+        const notes = user.notes;
+        return res.json(notes);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send("Internal Server error");
+    }
+});
+
 //@route    PUT api/notes
 //@desc     Add a note
 //@access   Private
